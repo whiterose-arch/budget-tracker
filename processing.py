@@ -16,8 +16,16 @@ def generate_next_id(transactions):
     Returns:
         int: 1 if the list is empty, otherwise highest id + 1
     """
-    # TODO: implement this
-    ...
+
+    if len(transactions) == 0:
+        return 1
+
+    sorted_transaction = sorted(transactions, key=lambda transaction: transaction["id"])
+
+    last_transaction = sorted_transaction[-1]
+    last_transaction_id = last_transaction["id"]
+
+    return int(last_transaction_id) + 1
 
 
 def find_transaction_by_id(transactions, transaction_id):
@@ -31,8 +39,14 @@ def find_transaction_by_id(transactions, transaction_id):
     Returns:
         dict | None: the matching transaction, or None if not found
     """
-    # TODO: implement this
-    ...
+    
+    selected_transaction = list(filter(lambda transaction: transaction["id"] == transaction_id, transactions))
+
+    if len(selected_transaction) == 0:
+        return
+
+    return selected_transaction[0]
+
 
 
 def update_transaction(transactions, transaction_id, updates):
@@ -47,11 +61,22 @@ def update_transaction(transactions, transaction_id, updates):
     Returns:
         bool: True if found and updated, False if id was not found
     """
-    # TODO: implement this
-    ...
 
+    selected_transaction = list(filter(lambda transaction: transaction["id"] == transaction_id, transactions))
 
-def delete_transaction(transactions, transaction_id):
+    if len(selected_transaction) == 0:
+        return False
+
+    keys = list(updates.keys())
+
+    for key in keys:
+        for transaction in transactions:
+            if transaction["id"] == transaction_id:
+                transaction[key] = updates[key]
+
+    return True
+
+def delete_transaction(transactions: list[dict], transaction_id):
     """
     Remove a transaction from the list (in place).
 
@@ -62,8 +87,19 @@ def delete_transaction(transactions, transaction_id):
     Returns:
         bool: True if something was removed, False if id was not found
     """
-    # TODO: implement this
-    ...
+
+    selected_transaction = list(filter(lambda transaction: transaction["id"] == transaction_id, transactions))
+
+    if len(selected_transaction) == 0:
+        return False
+
+    transaction = selected_transaction[0]
+    try:
+        transactions.remove(transaction)
+    except:
+        return False
+
+    return True
 
 
 def search_transactions(transactions, keyword):
@@ -77,8 +113,10 @@ def search_transactions(transactions, keyword):
     Returns:
         list[dict]: matching transactions (empty list if none)
     """
-    # TODO: implement this
-    ...
+    
+    filtered_transaction = list(filter(lambda transaction: keyword.lower() in transaction["description"].lower() or keyword in transaction["category"].lower(), transactions))
+
+    return filtered_transaction
 
 
 def filter_by_category(transactions, category):
@@ -92,8 +130,9 @@ def filter_by_category(transactions, category):
     Returns:
         list[dict]: matching transactions (empty list if none)
     """
-    # TODO: implement this
-    ...
+    filtered_transaction = list(filter(lambda transaction: category.lower() == transaction["category"].lower(), transactions))
+
+    return filtered_transaction
 
 
 def _check(name, condition, detail=""):
