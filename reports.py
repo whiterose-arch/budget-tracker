@@ -2,7 +2,7 @@
 Totals, category breakdown, monthly summary, and savings goals.
 Calculation only — no file I/O and no printing here.
 
-Assigned to:
+Assigned to: Ange Emmanuelle Ntsa Bineli
 """
 
 
@@ -17,8 +17,14 @@ def calculate_totals(transactions):
         dict: {"income": float, "expenses": float, "balance": float}
               where balance = income - expenses
     """
-    # TODO: implement this
-    ...
+    income = sum(t["amount"] for t in transactions if t.get("type") == "income")
+    expenses = sum(t["amount"] for t in transactions if t.get("type") == "expense")
+    return {
+        "income": float(income),
+        "expenses": float(expenses),
+        "balance": float(income - expenses),
+    }
+
 
 
 def calculate_by_category(transactions):
@@ -31,8 +37,13 @@ def calculate_by_category(transactions):
     Returns:
         dict[str, float]: {category: total_expense_amount}
     """
-    # TODO: implement this
-    ...
+    
+    categories = {}
+    for t in transactions:
+        if t.get("type") == "expense":
+            cat = t.get("category")
+            categories[cat] = categories.get(cat, 0.0) + t.get("amount", 0.0)
+    return categories
 
 
 def generate_monthly_summary(transactions, year, month):
@@ -48,8 +59,25 @@ def generate_monthly_summary(transactions, year, month):
         dict: {"income": float, "expenses": float, "net": float}
               where net = income - expenses
     """
-    # TODO: implement this
-    ...
+    
+    target_prefix = f"{int(year):04d}-{int(month):02d}"
+
+    income = 0.0
+    expenses = 0.0
+
+    for t in transactions:
+        if t.get("date", "").startswith(target_prefix):
+            if t.get("type") == "income":
+                income += t.get("amount", 0.0)
+            elif t.get("type") == "expense":
+                expenses += t.get("amount", 0.0)
+
+    return {
+        "income": income,
+       "expenses": expenses,
+        "net": income - expenses,
+    }       
+
 
 
 def add_savings_goal(savings_goals, name, target_amount):
@@ -65,8 +93,15 @@ def add_savings_goal(savings_goals, name, target_amount):
         dict: the new goal
               {"name": str, "target_amount": float, "current_amount": 0}
     """
-    # TODO: implement this
-    ...
+    
+    goal = {
+        "name": name,
+         "target_amount": float(target_amount),
+        "current_amount": 0,
+    }
+    savings_goals.append(goal)
+    return goal
+
 
 
 def calculate_savings_progress(goal):
@@ -79,8 +114,15 @@ def calculate_savings_progress(goal):
     Returns:
         float: percentage (0–100). If target_amount is 0, return 0 (no divide-by-zero).
     """
-    # TODO: implement this
-    ...
+
+    target = goal.get("target_amount", 0.0)
+    current = goal.get("current_amount", 0.0)
+
+    if target <= 0:
+        return 0.0
+
+    return (current / target) * 100.0
+
 
 
 def _check(name, condition, detail=""):
