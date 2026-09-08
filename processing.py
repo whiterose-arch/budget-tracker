@@ -114,7 +114,7 @@ def search_transactions(transactions, keyword):
         list[dict]: matching transactions (empty list if none)
     """
     
-    filtered_transaction = list(filter(lambda transaction: keyword.lower() in transaction["description"].lower() or keyword in transaction["category"].lower(), transactions))
+    filtered_transaction = list(filter(lambda transaction: keyword.lower() in transaction["description"].lower() or keyword.lower() in transaction["category"].lower(), transactions))
 
     return filtered_transaction
 
