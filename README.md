@@ -13,7 +13,7 @@ see `Formative Walkthrought.txt`. The full brief is in `Formative.pdf`.
 | Name       | GitHub handle |
 | ---------- | ------------- |
 | Member 1   | @your-handle  |
-| Member 2   | @your-handle  |
+| Member 2   | @mugisha-eric  |
 | Member 3   | @your-handle  |
 
 ## Project layout
