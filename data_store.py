@@ -7,7 +7,7 @@ Data shape:
     "savings_goals": [ {name, target_amount, current_amount}, ... ]
 }
 
-Assigned to:
+Assigned to: Emmanuel
 """
 
 import json
@@ -31,8 +31,40 @@ def load_data(filepath):
               If the file is missing or unreadable, return DEFAULT_DATA
               (don't crash).
     """
-    # TODO: implement this
-    ...
+    filepath = filepath.strip()
+
+    if not filepath:
+        return DEFAULT_DATA.copy()
+
+    is_file_exist = os.path.exists(filepath)
+
+    if not is_file_exist:
+        return DEFAULT_DATA.copy()
+    
+    with open(filepath, "rb") as file:
+        file_obj = file.read()
+
+        if not file_obj:
+            return DEFAULT_DATA.copy()
+
+        try:
+            obj = json.loads(file_obj)
+        except:
+            return DEFAULT_DATA.copy()
+
+        keys = obj.keys()
+
+        if "transactions" not in keys or "savings_goals" not in keys:
+            return DEFAULT_DATA.copy()
+
+        transactions = obj["transactions"]
+        savings_goals = obj["savings_goals"]
+
+        if not isinstance(transactions, list) or not isinstance(savings_goals, list):
+            return DEFAULT_DATA.copy()
+
+        
+        return obj
 
 
 def save_data(filepath, data):
@@ -46,8 +78,14 @@ def save_data(filepath, data):
     Returns:
         bool: True if the write worked, False if it failed
     """
-    # TODO: implement this
-    ...
+    try:
+        with open(filepath, "wb") as file:
+            obj = json.dumps(data).encode("utf-8")
+            file.write(obj)
+
+        return True
+    except:
+        return False
 
 
 def _check(name, condition, detail=""):
