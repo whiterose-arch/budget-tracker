@@ -6,6 +6,9 @@ so bad input re-prompts instead of crashing.
 Assigned to: Emmanuel
 """
 
+from datetime import datetime
+
+
 def get_non_empty_text(prompt):
     """
     Ask until the user enters non-empty text.
@@ -95,6 +98,39 @@ def get_yes_no(prompt):
     else:
         return False
 
+
+def get_valid_date(prompt):
+    """
+    Ask until the user enters a valid date as YYYY-MM-DD.
+
+    Args:
+        prompt (str): text shown to the user
+
+    Returns:
+        str: date string in YYYY-MM-DD form
+
+    Notes:
+        Reject empty input and values that are not a real calendar date
+        in YYYY-MM-DD (e.g. "wywyew", "2026-13-40"); re-prompt instead
+        of crashing.
+    """
+    while True:
+        value = input(prompt).strip()
+        if is_valid_date(value):
+            return value
+
+
+def is_valid_date(value):
+    """
+    Return True if value is a real calendar date in YYYY-MM-DD form.
+    """
+    try:
+        datetime.strptime(value.strip(), "%Y-%m-%d")
+        return True
+    except (TypeError, ValueError, AttributeError):
+        return False
+
+
 def _check(name, condition, detail=""):
     if condition:
         print(f"  PASS  {name}")
@@ -174,6 +210,20 @@ if __name__ == "__main__":
         ok &= _check("get_yes_no n → False", no is False, f"got {no!r}")
     except Exception as err:
         ok &= _check("get_yes_no (n) no crash", False, str(err))
+    finally:
+        builtins.input = real_input
+
+    real_input, leftover = _with_inputs(["wywyew", "2026-13-40", "2026-08-01"])
+    try:
+        date = get_valid_date("Date (YYYY-MM-DD): ")
+        ok &= _check(
+            "get_valid_date accepts YYYY-MM-DD",
+            date == "2026-08-01",
+            f"got {date!r}",
+        )
+        ok &= _check("get_valid_date rejected bad values first", leftover == [])
+    except Exception as err:
+        ok &= _check("get_valid_date no crash", False, str(err))
     finally:
         builtins.input = real_input
 
