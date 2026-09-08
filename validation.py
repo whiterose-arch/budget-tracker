@@ -3,9 +3,8 @@ Helpers for reading user input safely.
 Other modules should use these instead of calling input() directly
 so bad input re-prompts instead of crashing.
 
-Assigned to:
+Assigned to: Emmanuel
 """
-
 
 def get_non_empty_text(prompt):
     """
@@ -17,8 +16,13 @@ def get_non_empty_text(prompt):
     Returns:
         str: stripped non-empty string
     """
-    # TODO: implement this
-    ...
+    user_value = input(prompt)
+
+    user_value = user_value.strip()
+    if not user_value:
+        user_value = get_non_empty_text(prompt)
+
+    return user_value
 
 
 def get_valid_amount(prompt):
@@ -34,8 +38,20 @@ def get_valid_amount(prompt):
     Notes:
         Reject non-numeric input and values <= 0; re-prompt instead of crashing.
     """
-    # TODO: implement this
-    ...
+    user_amount = input(prompt)
+
+    user_amount = user_amount.strip()
+
+    try:
+        user_amount = float(user_amount)
+    except:
+        user_amount = get_valid_amount(prompt)
+
+
+    if user_amount <= 0:
+        user_amount = get_valid_amount(prompt)
+
+    return user_amount
 
 
 def get_valid_menu_choice(prompt, valid_choices):
@@ -49,8 +65,14 @@ def get_valid_menu_choice(prompt, valid_choices):
     Returns:
         str: the chosen value (one of valid_choices)
     """
-    # TODO: implement this
-    ...
+    user_choice = input(prompt)
+
+    user_choice = user_choice.strip()
+
+    if not user_choice or user_choice not in valid_choices:
+        user_choice = get_valid_menu_choice(prompt, valid_choices)
+
+    return user_choice
 
 
 def get_yes_no(prompt):
@@ -63,9 +85,15 @@ def get_yes_no(prompt):
     Returns:
         bool: True for yes (y/yes), False for no (n/no), case-insensitive
     """
-    # TODO: implement this
-    ...
+    user_option = input(prompt).strip().lower()
 
+    while not user_option or user_option not in ["y", "n", 'no', 'yes']:
+        user_option = input(prompt).strip().lower()
+
+    if user_option == "y" or user_option == "yes":
+        return True
+    else:
+        return False
 
 def _check(name, condition, detail=""):
     if condition:
