@@ -202,8 +202,15 @@ def main():
         "9": show_monthly_summary_flow,
     }
 
+    first_run = True
+
     while True:
+        if not first_run:
+            input("\nPress Enter to continue...")
+
         print_menu()
+        first_run = False
+        
         choice = input("Enter your choice: ").strip()
 
         if choice == "10":
