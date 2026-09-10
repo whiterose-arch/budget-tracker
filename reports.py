@@ -103,6 +103,51 @@ def add_savings_goal(savings_goals, name, target_amount):
     return goal
 
 
+def find_savings_goal_by_name(savings_goals, name):
+    """
+    Find one savings goal by name (case-insensitive).
+
+    Args:
+        savings_goals (list[dict]): list of goal dicts
+        name (str): goal name to look for
+
+    Returns:
+        dict | None: the matching goal, or None if not found
+    """
+    needle = name.strip().lower()
+    for goal in savings_goals:
+        if str(goal.get("name", "")).strip().lower() == needle:
+            return goal
+    return None
+
+
+def update_savings_goal(savings_goals, name, updates):
+    """
+    Update fields on an existing savings goal.
+
+    Args:
+        savings_goals (list[dict]): list of goal dicts
+        name (str): goal name to update (case-insensitive match)
+        updates (dict): fields to change, e.g.
+            {"current_amount": 500.0, "target_amount": 2500.0, "name": "Emergency Fund"}
+
+    Returns:
+        bool: True if found and updated, False if name was not found
+    """
+    goal = find_savings_goal_by_name(savings_goals, name)
+    if goal is None:
+        return False
+
+    allowed = ("name", "target_amount", "current_amount")
+    for key, value in updates.items():
+        if key not in allowed:
+            continue
+        if key in ("target_amount", "current_amount"):
+            goal[key] = float(value)
+        else:
+            goal[key] = value
+    return True
+
 
 def calculate_savings_progress(goal):
     """
@@ -257,6 +302,37 @@ if __name__ == "__main__":
         "calculate_savings_progress target 0 → 0",
         zero_target == 0 or zero_target == 0.0,
         f"got {zero_target!r}",
+    )
+
+    found = find_savings_goal_by_name(goals, "emergency")
+    ok &= _check(
+        "find_savings_goal_by_name case-insensitive",
+        found is goal,
+        f"got {found!r}",
+    )
+    ok &= _check(
+        "find_savings_goal_by_name missing → None",
+        find_savings_goal_by_name(goals, "Missing") is None,
+    )
+
+    updated = update_savings_goal(
+        goals, "Emergency", {"current_amount": 500.0, "target_amount": 2500.0}
+    )
+    ok &= _check("update_savings_goal returns True", updated is True)
+    ok &= _check(
+        "update_savings_goal changes fields",
+        goal.get("current_amount") == 500.0 and goal.get("target_amount") == 2500.0,
+        f"got {goal!r}",
+    )
+    renamed = update_savings_goal(goals, "Emergency", {"name": "Emergency Fund"})
+    ok &= _check(
+        "update_savings_goal renames goal",
+        renamed is True and goal.get("name") == "Emergency Fund",
+        f"got {goal!r}",
+    )
+    ok &= _check(
+        "update_savings_goal missing name → False",
+        update_savings_goal(goals, "NoSuchGoal", {"current_amount": 1.0}) is False,
     )
 
     print("All good." if ok else "Some checks failed — fix before opening a PR.")
