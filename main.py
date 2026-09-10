@@ -28,7 +28,7 @@ def add_transaction_flow(data):
     t_type = "income" if t_type == "1" else "expense"
     amount = validation.get_valid_amount("Amount: ")
     category = validation.get_non_empty_text("Category: ")
-    date = validation.get_non_empty_text("Date (YYYY-MM-DD): ")
+    date = validation.get_valid_date("Date (YYYY-MM-DD): ")
     description = input("Description (optional): ").strip()
 
     new_id = processing.generate_next_id(data["transactions"])
@@ -76,8 +76,13 @@ def update_transaction_flow(data):
     if new_category:
         updates["category"] = new_category
     if new_date:
-        updates["date"] = new_date
-
+            while new_date and not validation.is_valid_date(new_date):
+                new_date = input(
+                    f"Date [{transaction['date']}] (YYYY-MM-DD, blank to keep): "
+                ).strip()
+            if new_date:
+                updates["date"] = new_date
+                
     success = processing.update_transaction(data["transactions"], int(t_id), updates)
     if success:
         data_store.save_data(DATA_FILE, data)
