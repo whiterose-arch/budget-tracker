@@ -69,9 +69,11 @@ budget-tracker/
    python3 main.py
    ```
 
-`data/budget_data.json` is what the app reads/writes while you test. If `data/budget_data.json` doesn't exist when the app starts, it will be created automatically to store your transactions and savings goals or run command: ```bash
+`data/budget_data.json` is what the app reads/writes while you test. If `data/budget_data.json` doesn't exist when the app starts, it will be created automatically to store your transactions and savings goals or run command: 
+```bash
    cp data/budget_data.sample.json data/budget_data.json
-``` to fill sample data.
+```
+to fill sample data.
 
 ## Usage
 ```bash
