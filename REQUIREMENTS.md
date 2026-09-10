@@ -30,7 +30,7 @@ ___
 * **Total Calculations**: The system shall calculate total income, total expenses, and remaining net balance across all recorded data.
 * **Category Breakdown**: The system shall aggregate and report total expenses broken down by individual categories (e.g., Food, Transport, Rent).
 * **Monthly Summary**: The system shall generate a summary for a specific year and month (`YYYY-MM`) showing total income, total expenses, and net savings.
-* **Savings Goals Tracker**: The system shall allow users to define target savings goals and compute their progress towards these targets as a percentage.
+* **Savings Goals Tracker**: The system shall allow users to define target savings goals, update an existing goal (name, target amount, and current amount), and compute their progress towards these targets as a percentage.
 * **Data Persistence**: The system shall load data from a `data.json` file on startup and save changes automatically when records are modified.
 * **Input Validation**: The system shall use `try/except` blocks to catch invalid inputs and missing/corrupted data files without crashing.
 

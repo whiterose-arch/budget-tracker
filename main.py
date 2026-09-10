@@ -162,20 +162,78 @@ def manage_savings_goals_flow(data):
     print("\n-- Savings goals --")
     print("1. Add a goal")
     print("2. View goal progress")
-    choice = validation.get_valid_menu_choice("Choice: ", ["1", "2"])
+    print("3. Update a goal")
+    choice = validation.get_valid_menu_choice("Choice: ", ["1", "2", "3"])
     if choice == "1":
         name = validation.get_non_empty_text("Goal name: ")
         target = validation.get_valid_amount("Target amount: ")
         reports.add_savings_goal(data["savings_goals"], name, target)
         data_store.save_data(DATA_FILE, data)
         print("Goal added.")
-    else:
+    elif choice == "2":
         if not data["savings_goals"]:
             print("No savings goals yet.")
             return
         for goal in data["savings_goals"]:
             progress = reports.calculate_savings_progress(goal)
-            print(f"{goal['name']}: {progress:.1f}% of {goal['target_amount']:.2f}")
+            print(
+                f"{goal['name']}: {progress:.1f}% "
+                f"({goal.get('current_amount', 0):.2f} / {goal['target_amount']:.2f})"
+            )
+    else:
+        if not data["savings_goals"]:
+            print("No savings goals yet.")
+            return
+
+        print("Existing goals:")
+        for goal in data["savings_goals"]:
+            print(f"- {goal['name']}")
+
+        name = validation.get_non_empty_text("Goal name to update: ")
+        goal = reports.find_savings_goal_by_name(data["savings_goals"], name)
+        if goal is None:
+            print("No savings goal with that name.")
+            return
+
+        print("Leave a field blank to keep its current value.")
+        new_name = input(f"Name [{goal['name']}]: ").strip()
+        new_target = input(f"Target amount [{goal['target_amount']}]: ").strip()
+        new_current = input(f"Current amount [{goal.get('current_amount', 0)}]: ").strip()
+
+        updates = {}
+        if new_name:
+            updates["name"] = new_name
+        if new_target:
+            try:
+                target_value = float(new_target)
+            except ValueError:
+                print("Target amount must be a number.")
+                return
+            if target_value <= 0:
+                print("Target amount must be greater than 0.")
+                return
+            updates["target_amount"] = target_value
+        if new_current:
+            try:
+                current_value = float(new_current)
+            except ValueError:
+                print("Current amount must be a number.")
+                return
+            if current_value < 0:
+                print("Current amount cannot be negative.")
+                return
+            updates["current_amount"] = current_value
+
+        if not updates:
+            print("No changes made.")
+            return
+
+        success = reports.update_savings_goal(data["savings_goals"], name, updates)
+        if success:
+            data_store.save_data(DATA_FILE, data)
+            print("Goal updated.")
+        else:
+            print("Update failed.")
 
 
 def print_menu():

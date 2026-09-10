@@ -28,7 +28,7 @@ see `Formative Walkthrought.txt`. The full brief is in `Formative.pdf`.
 - **Totals** — see total income, total expenses, and current balance
 - **Spending by category** — breakdown of expenses grouped by category
 - **Monthly summary** — income, expenses, and net total for a given month/year
-- **Savings goals** — create goals with a target amount and track progress toward them
+- **Savings goals** — create goals, update name/target/current amount, and track progress toward them
 - Data saved in `data/budget_data.json` between runs (local only; see sample file below)
 
 ## Project layout
@@ -126,8 +126,9 @@ Transactions are stored as JSON objects with the following fields:
 | `date`        | string | Date in `YYYY-MM-DD` format                   |
 | `description` | string | Optional free-text description                |
 
-Savings goals are stored with a name, target amount, and progress data used by
-`reports.calculate_savings_progress`.
+Savings goals are stored with a name, target amount, and current amount. You can
+update those fields from **Manage savings goals → Update a goal**; progress % is
+computed by `reports.calculate_savings_progress`.
 
 
 ## Sources & AI disclosure
