@@ -1,6 +1,8 @@
 # Personal Budget & Savings Goal Tracker
 
-Menu-driven Python CLI for tracking income, expenses, and savings goals.
+A command-line Python application for tracking income, expenses, and savings goals.
+Users can add, update, delete, and search transactions, view spending reports, and
+track progress toward savings goals — all through a simple text menu.
 
 Formative assessment — Introduction to Programming and Databases.
 We chose the **Personal Budget & Savings Goal Tracker** scenario from the brief.
@@ -10,11 +12,24 @@ see `Formative Walkthrought.txt`. The full brief is in `Formative.pdf`.
 
 ## Team
 
-| Name       | GitHub handle |
-| ---------- | ------------- |
-| Member 1   | @your-handle  |
-| Member 2   | @your-handle  |
-| Member 3   | @your-handle  |
+| Name                   | Role / Module(s)                        | GitHub handle       |
+| ---------------------- | ---------------------------------------- | -------------------- |
+| Emmanuel Adekojo        | Data Processing                          | @whiterose-arch       |
+| Emmanulle Ange Bineli   | Reporting and Documentation              | @binelintsa-sketch    |
+| Eric Mugisha            | Main Interface and Modules Connection    | @mugisha-eric         |
+
+## Features
+
+- **Add transactions** — record income or expenses with amount, category, date, and an optional description
+- **View transactions** — list every recorded transaction
+- **Update transactions** — edit the amount, category, or date of an existing transaction by ID
+- **Delete transactions** — remove a transaction by ID (with confirmation)
+- **Search / filter** — find transactions by keyword or filter by category
+- **Totals** — see total income, total expenses, and current balance
+- **Spending by category** — breakdown of expenses grouped by category
+- **Monthly summary** — income, expenses, and net total for a given month/year
+- **Savings goals** — create goals with a target amount and track progress toward them
+- Data saved in `data/budget_data.json` between runs (local only; see sample file below)
 
 ## Project layout
 
@@ -24,7 +39,7 @@ budget-tracker/
 ├── validation.py           # input checks
 ├── data_store.py           # load/save JSON
 ├── processing.py           # search / filter / update / delete
-├── reports.py              # totals, category report, monthly summary, goals
+├── reports.py               # totals, category report, monthly summary, goals
 ├── data/
 │   └── budget_data.sample.json   # starter data (committed)
 ├── AI_DISCLOSURE.md
@@ -33,94 +48,74 @@ budget-tracker/
 └── README.md
 ```
 
-Each of `validation.py`, `data_store.py`, `processing.py`, and `reports.py`
-has empty functions (`# TODO`) for someone to fill in. `main.py` already
-calls them, so once a file is done that part of the menu should work.
+## Requirements
 
-Before opening a PR, run your file on its own — each one has a small
-self-check at the bottom (`if __name__ == "__main__"`):
-
-```bash
-python3 data_store.py
-python3 validation.py
-python3 processing.py
-python3 reports.py
-```
-
-You want `PASS` lines and `All good.` at the end. No extra libraries needed.
+- Python 3.x
+- No external dependencies — uses only the standard library (`json`, `os`)
 
 ## How to run
 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/whiterose-arch/budget-tracker.git
+   cd budget-tracker
+   ```
+2. (Optional) start with the sample data — otherwise the app starts empty:
+   ```bash
+   cp data/budget_data.sample.json data/budget_data.json
+   ```
+3. Run the application:
+   ```bash
+   python3 main.py
+   ```
+
+`data/budget_data.json` is what the app reads/writes while you test. If `data/budget_data.json` doesn't exist when the app starts, it will be created automatically to store your transactions and savings goals or run command: 
 ```bash
-# optional: start with the sample data (otherwise the app starts empty)
-cp data/budget_data.sample.json data/budget_data.json
+   cp data/budget_data.sample.json data/budget_data.json
+```
+to fill sample data.
 
-python3 main.py
+## Usage
+```bash
+   python3 main.py
 ```
 
-Needs Python 3 only (standard library: `json`, `os`). No extra packages.
-
-`data/budget_data.json` is what the app reads/writes while you test. It’s in
-`.gitignore` so random test data doesn’t show up in PRs. Edit/share starter
-data via `data/budget_data.sample.json` instead.
-
-## Features (what we're building)
-
-- Add / view / update / delete transactions
-- Search or filter transactions
-- Totals (income, expenses, balance)
-- Spending by category
-- Monthly summary
-- Savings goals and progress %
-- Data saved in `data/budget_data.json` between runs (local only; see sample file above)
-
-## Team workflow
-
-We split work by file so we don't step on each other. One GitHub issue per
-file (see the Issues tab once the repo is on GitHub).
-
-1. Pick an open issue and assign yourself.
-2. Branch off `main`: `<your-github-handle>/issue-<number>-<short-name>`
-   e.g. `alex/issue-2-validation`
-3. Only change the file(s) listed on that issue.
-4. Open a PR. First line of the description: `Closes #<issue-number>`
-5. Someone else reviews before merge — don't merge your own PR.
-6. Don't push straight to `main`.
-
-### Commit messages (required)
-
-Use this format so history stays readable:
+Running `main.py` launches an interactive menu:
 
 ```
-type: short summary of what changed
+===== BUDGET & SAVINGS TRACKER =====
+1. Add transaction
+2. View transactions
+3. Update transaction
+4. Delete transaction
+5. Search / filter transactions
+6. Show totals (income/expenses/balance)
+7. Show spending by category
+8. Manage savings goals
+9. Show monthly summary
+10. Exit
 ```
 
-Allowed `type` values:
+Enter the number corresponding to the action you want, then follow the prompts.
+Errors in any single feature are caught so the program keeps running rather than
+crashing — you'll just see a "Something went wrong" message and return to the menu.
 
-| type | when to use |
-| ---- | ----------- |
-| `feat` | new behaviour / implementing a function |
-| `fix` | bug fix |
-| `docs` | README, issues, disclosure, requirements note |
-| `chore` | .gitignore, sample data, small cleanup |
-| `test` | self-check / testing tweaks |
+## Data format
 
-Examples:
+Transactions are stored as JSON objects with the following fields:
 
-```
-feat: implement load_data and save_data
-fix: reject zero amounts in get_valid_amount
-docs: fill in team names in README
-chore: expand sample budget data
-```
+| Field         | Type   | Description                                  |
+|---------------|--------|-----------------------------------------------|
+| `id`          | int    | Unique transaction ID                         |
+| `type`        | string | `"income"` or `"expense"`                     |
+| `amount`      | float  | Transaction amount                            |
+| `category`    | string | Category label (e.g. "Groceries", "Salary")   |
+| `date`        | string | Date in `YYYY-MM-DD` format                   |
+| `description` | string | Optional free-text description                |
 
-Optional: mention the issue — `feat: implement validation helpers (#2)`.
+Savings goals are stored with a name, target amount, and progress data used by
+`reports.calculate_savings_progress`.
 
-Keep the summary short (about one line). Don’t paste huge explanations into the commit title.
-
-`data_store`, `validation`, `processing`, and `reports` can be done at the
-same time. After those are in, we do a full run-through and fix anything
-that breaks when the pieces meet.
 
 ## Sources & AI disclosure
 
@@ -142,12 +137,3 @@ processing, and reports) are written by the team member who owns that file.
 https://chatgpt.com
 
 Same note is also in [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md).
-
-## Other deliverables
-
-Still to write as a team:
-
-- Short requirements note (problem, GCGO link, features, data fields)
-- Demo walkthrough video
-
-These are listed in `Formative.pdf` under Required Deliverables.
